@@ -1,0 +1,114 @@
+version: '3'
+
+services:
+  zookeeper:
+    image: zookeeper
+    container_name: zookeeper
+    restart: always
+
+# INPUT STREAM
+
+  stream_generator:
+    build: ./stream_generator
+    depends_on: 
+      - kafka1
+    tty: true
+    volumes:
+      - ./stream_generator/py:/home
+    environment:
+      - PYTHONUNBUFFERED=0                        # redirect python prints
+    command: bash -c "python3 /home/main.py"
+
+# KAFKA
+
+  kafka1:
+    build: ./kafka
+    depends_on: 
+      - zookeeper
+    ports:
+      - "9092:9092"
+      - "9099:9099"
+    environment:
+      KAFKA_ADVERTISED_HOST_NAME: kafka1
+      KAFKA_CREATE_TOPICS: "test:1:1"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote \
+                       -Dcom.sun.management.jmxremote.authenticate=false \
+                       -Dcom.sun.management.jmxremote.ssl=false \
+                       -Djava.rmi.server.hostname=kafka1 \
+                       -Dcom.sun.management.jmxremote.rmi.port=9099"
+      JMX_PORT: 9099
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+   
+
+
+  kafka-manager:
+    image: sheepkiller/kafka-manager:latest
+    ports:
+      - "9000:9000"
+    environment:
+      ZK_HOSTS: zookeeper:2181
+      APPLICATION_SECRET: letmein
+      KM_ARGS: -Djava.net.preferIPv4Stack=true
+      JMX_PORT: 9099
+
+
+# STORM
+
+  nimbus:
+    image: storm
+    container_name: nimbus
+    command: storm nimbus
+    depends_on:
+      - zookeeper
+    links:
+      - zookeeper
+    restart: always
+    ports:
+      - 6627:6627
+
+  supervisor:
+    image: storm
+    container_name: supervisor
+    command: storm supervisor
+    depends_on:
+      - nimbus
+      - zookeeper
+    links:
+      - nimbus
+      - zookeeper
+    restart: always
+
+  ui:
+    image: storm
+    container_name: ui
+    command: storm ui
+    ports:
+      - 8080:8080
+    depends_on:
+      - nimbus
+    links:
+      - nimbus
+
+# SPARK
+  spark-master:
+    image: bde2020/spark-master:2.4.1-hadoop2.7
+    container_name: spark-master
+    ports:
+      - "8081:8080"
+      - "7077:7077"
+    environment:
+      - INIT_DAEMON_STEP=setup_spark
+      - "constraint:node==<yourmasternode>"
+  spark-worker-1:
+    image: bde2020/spark-worker:2.4.1-hadoop2.7
+    container_name: spark-worker-1
+    depends_on:
+      - spark-master
+    ports:
+      - "8082:8081"
+    environment:
+      - "SPARK_MASTER=spark://spark-master:7077"
+      - "constraint:node==<yourworkernode>"
+
