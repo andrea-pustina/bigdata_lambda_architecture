@@ -31,6 +31,8 @@ services:
       - nimbus
       - zookeeper
     restart: always
+    volumes:
+      - ./storm_ssh/supervisor_log:/var/log/storm/streamparse
 
   ui:
     image: storm
