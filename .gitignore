@@ -57,10 +57,11 @@ docs/_build/
 # PyBuilder
 target/
 
-stream_generator/py/mta_1706\.csv
+stream_generator/py/data/
 
-stream_generator/py/mta_1708\.csv
 
-stream_generator/py/mta_1710\.csv
 
-stream_generator/py/mta_1712\.csv
+
+
+
+

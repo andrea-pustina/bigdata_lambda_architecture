@@ -15,3 +15,5 @@ RUN apt install apt-utils python3 python3-pip -y && \
 RUN pip3 install streamparse
 
 RUN mkdir -p /var/log/storm/streamparse
+
+RUN pip3 install pykafka

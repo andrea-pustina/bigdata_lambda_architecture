@@ -16,7 +16,7 @@
                 "level": "info"
             },
             "use_ssh_for_nimbus": false,
-            "use_virtualenv": true,
+            "use_virtualenv": false,
             "virtualenv_root": "/data/virtualenvs/"
         }
     }

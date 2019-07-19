@@ -2,7 +2,7 @@
 #docker stop $(docker ps -a -q)
 #docker system prune -a --force
 
-#docker-compose exec stream_generator bash
+#sudo docker-compose exec stream_generator bash
 
 docker-compose down
 #docker-compose build

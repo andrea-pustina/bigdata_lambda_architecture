@@ -5,7 +5,7 @@ from streamparse import Bolt
 
 
 class WordCountBolt(Bolt):
-    outputs = ["word", "count"]
+    outputs = ["msg", "count"]
 
     def initialize(self, conf, ctx):
         self.counter = Counter()

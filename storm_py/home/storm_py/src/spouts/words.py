@@ -1,14 +1,34 @@
 from itertools import cycle
 
 from streamparse import Spout
+from pykafka import KafkaClient
 
 
 class WordSpout(Spout):
-    outputs = ["word"]
+    outputs = ['msg']
 
     def initialize(self, stormconf, context):
-        self.words = cycle(["dog", "cat", "zebra", "elephant"])
+        client = KafkaClient(hosts="kafka1:9092")
+
+        topic = client.topics['bus']
+
+        #self.simple_consumer = topic.get_simple_consumer()
+
+        self.balanced_consumer = topic.get_balanced_consumer(
+            consumer_group=b"test_group",
+            auto_commit_enable=True,
+            zookeeper_connect="zookeeper:2181"
+        )
+
+        self.reg = self.regex()
 
     def next_tuple(self):
-        word = next(self.words)
-        self.emit([word])
+        message = self.balanced_consumer.consume(block=False)
+
+        #message = self.simple_consumer.consume()
+
+        if message:
+            msg = message.value.decode('utf-8')
+
+            self.logger.info('==================={}'.format(msg))
+            self.emit([msg])
