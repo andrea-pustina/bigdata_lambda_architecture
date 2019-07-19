@@ -6,52 +6,49 @@ services:
     container_name: zookeeper
     restart: always
 
-# STORM
 
-  nimbus:
+# STORM
+  storm_nimbus:
     build: ./storm_ssh
-    container_name: nimbus
+    container_name: storm_nimbus
     command: /bin/bash -c "/usr/sbin/sshd -D & storm nimbus"
     depends_on:
-      - zookeeper
-    links:
       - zookeeper
     restart: always
     ports:
       - 6627:6627
 
-  supervisor:
+  storm_supervisor:
     build: ./storm_ssh
-    container_name: supervisor
+    container_name: storm_supervisor
     command: /bin/bash -c "/usr/sbin/sshd -D & storm supervisor"
     depends_on:
-      - nimbus
       - zookeeper
       - kafka1
       - stream_generator
+      - storm_nimbus
     links:
-      - nimbus
-      - zookeeper
+      - storm_nimbus:nimbus
     restart: always
     volumes:
       - ./storm_ssh/supervisor_log:/var/log/storm/streamparse
 
-  ui:
+  storm_ui:
     image: storm
-    container_name: ui
+    container_name: storm_ui
     command: storm ui
     ports:
       - 8080:8080
     depends_on:
-      - nimbus
+      - storm_nimbus
     links:
-      - nimbus
+      - storm_nimbus:nimbus
 
   storm_py:
     build: ./storm_py
     container_name: storm_py
     depends_on: 
-      - nimbus
+      - storm_nimbus
     tty: true
     volumes:
       - ./storm_py/home:/home
@@ -60,7 +57,6 @@ services:
 
 
 # INPUT STREAM GENERATOR
-
   stream_generator:
     build: ./stream_generator
     container_name: stream_generator
@@ -73,8 +69,8 @@ services:
       - PYTHONUNBUFFERED=0                        # redirect python prints
     command: bash -c "python3 /home/main.py"
 
-# KAFKA
 
+# KAFKA
   kafka1:
     build: ./kafka
     container_name: kafka1
@@ -110,6 +106,7 @@ services:
       APPLICATION_SECRET: letmein
       KM_ARGS: -Djava.net.preferIPv4Stack=true
       JMX_PORT: 9099
+
 
 # SPARK
 #  spark-master:
