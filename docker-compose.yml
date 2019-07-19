@@ -49,6 +49,7 @@ services:
 
   storm_py:
     build: ./storm_py
+    container_name: storm_py
     depends_on: 
       - nimbus
     tty: true
@@ -62,6 +63,7 @@ services:
 
   stream_generator:
     build: ./stream_generator
+    container_name: stream_generator
     depends_on: 
       - kafka1
     tty: true
@@ -75,6 +77,7 @@ services:
 
   kafka1:
     build: ./kafka
+    container_name: kafka1
     depends_on: 
       - zookeeper
     ports:
@@ -97,6 +100,7 @@ services:
 
   kafka-manager:
     image: sheepkiller/kafka-manager:latest
+    container_name: kafka-manager
     depends_on: 
       - kafka1
     ports:
