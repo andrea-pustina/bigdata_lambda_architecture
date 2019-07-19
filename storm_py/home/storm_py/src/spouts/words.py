@@ -12,20 +12,19 @@ class WordSpout(Spout):
 
         topic = client.topics['bus']
 
-        #self.simple_consumer = topic.get_simple_consumer()
+        self.simple_consumer = topic.get_simple_consumer()
 
-        self.balanced_consumer = topic.get_balanced_consumer(
-            consumer_group=b"test_group",
-            auto_commit_enable=True,
-            zookeeper_connect="zookeeper:2181"
-        )
-
-        self.reg = self.regex()
+        #self.balanced_consumer = topic.get_balanced_consumer(
+        #    consumer_group=b"test_group",
+        #    auto_commit_enable=True,
+        #    zookeeper_connect="zookeeper:2181"
+        #)
+        #self.reg = self.regex()
 
     def next_tuple(self):
-        message = self.balanced_consumer.consume(block=False)
+        #message = self.balanced_consumer.consume(block=False)
 
-        #message = self.simple_consumer.consume()
+        message = self.simple_consumer.consume()
 
         if message:
             msg = message.value.decode('utf-8')
