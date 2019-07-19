@@ -6,8 +6,8 @@
         "prod": {
             "user": "root",
             "ssh_password": "qwerty",
-            "nimbus": "nimbus",
-            "workers": ["supervisor"],
+            "nimbus": "storm_nimbus",
+            "workers": ["storm_supervisor"],
             "log": {
                 "path": "/var/log/storm/streamparse",
                 "file": "pystorm.log",

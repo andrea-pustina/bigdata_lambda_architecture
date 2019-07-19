@@ -26,4 +26,6 @@ RUN apk add openssh-client
 
 RUN mkdir /root/.ssh && touch /root/.ssh/config
 
+RUN pip install pykafka
+
 

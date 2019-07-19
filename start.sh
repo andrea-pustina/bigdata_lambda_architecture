@@ -3,6 +3,7 @@
 #docker system prune -a --force
 
 #sudo docker-compose exec stream_generator bash
+#sudo docker-compose exec storm_py bash
 
 docker-compose down
 #docker-compose build
