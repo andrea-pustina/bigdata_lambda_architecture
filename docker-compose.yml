@@ -142,29 +142,65 @@ services:
 
 # SPARK
   spark-master:
-    image: bde2020/spark-master:2.1.0-hadoop2.8-hive-java8
+    image: bde2020/spark-master:2.4.1-hadoop2.7
     container_name: spark-master
     ports:
-      - 8080:8080
-      - 7077:7077
-    env_file:
-      - ./hadoop/hadoop.env
+      - "8080:8080"
+      - "7077:7077"
+    environment:
+      - INIT_DAEMON_STEP=setup_spark
 
-  spark-worker:
-    image: bde2020/spark-worker:2.1.0-hadoop2.8-hive-java8
+  spark-worker-1:
+    image: bde2020/spark-worker:2.4.1-hadoop2.7
+    container_name: spark-worker-1
     depends_on:
       - spark-master
-    environment:
-      - SPARK_MASTER=spark://spark-master:7077
     ports:
-      - 8081:8081
-    env_file:
-      - ./hadoop/hadoop.env
+      - "8081:8081"
+    environment:
+      - "SPARK_MASTER=spark://spark-master:7077"
 
-  spark-notebook:
-    image: jupyter/pyspark-notebook
+  spark-app:
+    build: ./spark_app
+    container_name: spark-app
+    environment:
+      - SPARK_MASTER_NAME=spark-master
+      - SPARK_MASTER_PORT=7077
+      - SPARK_APPLICATION_PYTHON_LOCATION=/app/app.py
+      - ENABLE_INIT_DAEMON=false
+    volumes:
+      - ./spark_app/app:/app
+    tty: true
+
+
+  spark-notebook: 
+    build: ./spark_notebook
     container_name: spark-notebook
-#    env_file:
-#      - ./hadoop/hadoop.env
     ports:
       - 8888:8888
+    environment:
+      - PYSPARK_PYTHON=/usr/bin/python3
+      - PYSPARK_DRIVER_PYTHON=/usr/bin/python3
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
