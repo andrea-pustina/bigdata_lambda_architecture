@@ -1,108 +1,60 @@
-version: "2"
+version: '3' 
 
 services:
   namenode:
-    build: ./namenode
-    image: bde2020/hadoop-namenode:1.1.0-hadoop2.7.1-java8
+    image: bde2020/hadoop-namenode:1.1.0-hadoop2.8-java8
     container_name: namenode
     volumes:
-      - hadoop_namenode:/hadoop/dfs/name
+      - ./data/namenode:/hadoop/dfs/name
     environment:
       - CLUSTER_NAME=test
     env_file:
       - ./hadoop.env
     ports:
-      - "9870:50070"
-  
-  resourcemanager:
-    build: ./resourcemanager
-    image: bde2020/hadoop-resourcemanager:1.1.0-hadoop2.7.1-java8
-    container_name: resourcemanager
-    depends_on:
+      - 50070:50070
+
+  datanode:
+    image: bde2020/hadoop-datanode:1.1.0-hadoop2.8-java8
+    depends_on: 
       - namenode
-      - datanode1
-      - datanode2
-      - datanode3
-    environment:
-      SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
+    volumes:
+      - ./data/datanode:/hadoop/dfs/data
     env_file:
       - ./hadoop.env
     ports:
-      - "8089:8088"
-  
-  historyserver:
-    build: ./historyserver
-    image: bde2020/hadoop-historyserver:1.1.0-hadoop2.7.1-java8
-    container_name: historyserver
-    depends_on:
-      - namenode
-      - datanode1
-      - datanode2
-      - datanode3
-    volumes:
-      - hadoop_historyserver:/hadoop/yarn/timeline
-    env_file:
-      - ./hadoop.env
-  
-  nodemanager1:
-    build: ./nodemanager
-    image: bde2020/hadoop-nodemanager:1.1.0-hadoop2.7.1-java8
-    container_name: nodemanager1
-    depends_on:
-      - namenode
-      - datanode1
-      - datanode2
-      - datanode3
-    env_file:
-      - ./hadoop.env
-    
-  
-  datanode1:
-    build: ./datanode
-    image: bde2020/hadoop-datanode:1.1.0-hadoop2.7.1-java8
-    container_name: datanode1
-    depends_on:
-      - namenode
-    volumes:
-      - hadoop_datanode1:/hadoop/dfs/data
+      - 50075:50075
+
+  spark-master:
+    image: bde2020/spark-master:2.1.0-hadoop2.8-hive-java8
+    container_name: spark-master
+    ports:
+      - 8080:8080
+      - 7077:7077
     env_file:
       - ./hadoop.env
 
-  datanode2:
-    build: ./datanode
-    image: bde2020/hadoop-datanode:1.1.0-hadoop2.7.1-java8
-    container_name: datanode2
+  spark-worker:
+    image: bde2020/spark-worker:2.1.0-hadoop2.8-hive-java8
     depends_on:
-      - namenode
-    volumes:
-      - hadoop_datanode2:/hadoop/dfs/data
-    env_file:
-      - ./hadoop.env
-  
-  datanode3:
-    build: ./datanode
-    image: bde2020/hadoop-datanode:1.1.0-hadoop2.7.1-java8
-    container_name: datanode3
-    depends_on:
-      - namenode
-    volumes:
-      - hadoop_datanode3:/hadoop/dfs/data
+      - spark-master
+    environment:
+      - SPARK_MASTER=spark://spark-master:7077
+    ports:
+      - 8081:8081
     env_file:
       - ./hadoop.env
 
-#  hdfs_ui:
-#    image: bde2020/hdfs-filebrowser:3.11
-#    ports:
-#      - 8088:8088
-#    environment:
-#      - NAMENODE_HOST=namenode
+  spark-notebook:
+    image: bde2020/spark-notebook:2.1.0-hadoop2.8-hive
+    container_name: spark-notebook
+    env_file:
+      - ./hadoop.env
+    ports:
+      - 9001:9001
 
-volumes:
-  hadoop_namenode:
-  hadoop_datanode1:
-  hadoop_datanode2:
-  hadoop_datanode3:
-  hadoop_historyserver:
-
-
-
+  hue:
+    image: bde2020/hdfs-filebrowser:3.11
+    ports:
+      - 8088:8088
+    environment:
+      - NAMENODE_HOST=namenode
