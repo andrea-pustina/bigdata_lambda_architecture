@@ -57,55 +57,55 @@ services:
 
 
 # INPUT STREAM GENERATOR
-  stream_generator:
-    build: ./stream_generator
-    container_name: stream_generator
-    depends_on: 
-      - kafka1
-    tty: true
-    volumes:
-      - ./stream_generator/py:/home
-    environment:
-      - PYTHONUNBUFFERED=0                        # redirect python prints
-    command: bash -c "python3 /home/main.py"
+#  stream_generator:
+#    build: ./stream_generator
+#    container_name: stream_generator
+#    depends_on: 
+#      - kafka1
+#    tty: true
+#    volumes:
+#      - ./stream_generator/py:/home
+#    environment:
+#      - PYTHONUNBUFFERED=0                        # redirect python prints
+#    command: bash -c "python3 /home/main.py"
 
 
 # KAFKA
-  kafka1:
-    build: ./kafka
-    container_name: kafka1
-    depends_on: 
-      - zookeeper
-    ports:
-      - "9092:9092"
-      - "9099:9099"
-    environment:
-      KAFKA_ADVERTISED_HOST_NAME: kafka1
-      KAFKA_CREATE_TOPICS: "test:1:1"
-      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote \
-                       -Dcom.sun.management.jmxremote.authenticate=false \
-                       -Dcom.sun.management.jmxremote.ssl=false \
-                       -Djava.rmi.server.hostname=kafka1 \
-                       -Dcom.sun.management.jmxremote.rmi.port=9099"
-      JMX_PORT: 9099
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
+#  kafka1:
+#    build: ./kafka
+#    container_name: kafka1
+#    depends_on: 
+#      - zookeeper
+#    ports:
+#      - "9092:9092"
+#      - "9099:9099"
+#    environment:
+#      KAFKA_ADVERTISED_HOST_NAME: kafka1
+#      KAFKA_CREATE_TOPICS: "test:1:1"
+#      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+#      KAFKA_JMX_OPTS: "-Dcom.sun.management.jmxremote \
+#                       -Dcom.sun.management.jmxremote.authenticate=false \
+#                       -Dcom.sun.management.jmxremote.ssl=false \
+#                       -Djava.rmi.server.hostname=kafka1 \
+#                       -Dcom.sun.management.jmxremote.rmi.port=9099"
+#      JMX_PORT: 9099
+#    volumes:
+#      - /var/run/docker.sock:/var/run/docker.sock
    
 
 
-  kafka-manager:
-    image: sheepkiller/kafka-manager:latest
-    container_name: kafka-manager
-    depends_on: 
-      - kafka1
-    ports:
-      - "9000:9000"
-    environment:
-      ZK_HOSTS: zookeeper:2181
-      APPLICATION_SECRET: letmein
-      KM_ARGS: -Djava.net.preferIPv4Stack=true
-      JMX_PORT: 9099
+#  kafka-manager:
+#    image: sheepkiller/kafka-manager:latest
+#    container_name: kafka-manager
+#    depends_on: 
+#      - kafka1
+#    ports:
+#      - "9000:9000"
+#    environment:
+#      ZK_HOSTS: zookeeper:2181
+#      APPLICATION_SECRET: letmein
+#      KM_ARGS: -Djava.net.preferIPv4Stack=true
+#      JMX_PORT: 9099
 
 
 # SPARK
