@@ -23,6 +23,8 @@ services:
       - datanode1
       - datanode2
       - datanode3
+    environment:
+      SERVICE_PRECONDITION: "namenode:50070 datanode:50075"
     env_file:
       - ./hadoop.env
     ports:
