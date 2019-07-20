@@ -2,6 +2,11 @@
 #docker stop $(docker ps -a -q)
 #docker system prune -a --force
 
+
+#sudo docker stop $(sudo docker ps -a -q)
+#sudo docker rm $(sudo docker ps -a -q)
+
+# docker exec -it namenode bash
 #sudo docker-compose exec stream_generator bash
 #sudo docker-compose exec storm_py bash
 
