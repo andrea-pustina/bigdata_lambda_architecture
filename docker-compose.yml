@@ -62,7 +62,6 @@ services:
     container_name: stream_generator
     depends_on: 
       - kafka1
-    tty: true
     volumes:
       - ./stream_generator/py:/home
     environment:
@@ -125,6 +124,7 @@ services:
   datanode:
     build: ./hdfs_datanode
 #    image: bde2020/hadoop-datanode:1.1.0-hadoop2.8-java8
+    container_name: datanode
     depends_on: 
       - namenode
     volumes:
@@ -145,33 +145,38 @@ services:
 # KAFKA INGESTION INTO HDFS
   gobblin:
     image: gobblin/gobblin-standalone:ubuntu-gobblin-latest
+    container_name: gobblin
+    depends_on:
+      - namenode
+      - datanode
+      - kafka1
     volumes:
-      - ./gobblin/conf:/etc/opt/job-conf
+      - ./gobblin/job-conf:/etc/opt/job-conf
       - ./gobblin/work-dir:/home/gobblin/work-dir
       - ./gobblin/logs:/var/log/gobblin
 
 
 # SPARK
-  spark-master:
-    build: ./spark_master
-#    image: bde2020/spark-master:2.4.1-hadoop2.7
-    container_name: spark-master
-    ports:
-      - "8080:8080"
-      - "7077:7077"
-    environment:
-      - INIT_DAEMON_STEP=setup_spark
+#  spark-master:
+#    build: ./spark_master
+##    image: bde2020/spark-master:2.4.1-hadoop2.7
+#    container_name: spark-master
+#    ports:
+#      - "8080:8080"
+#      - "7077:7077"
+#    environment:
+#      - INIT_DAEMON_STEP=setup_spark
 
-  spark-worker-1:
-    build: ./spark_worker
-#    image: bde2020/spark-worker:2.4.1-hadoop2.7
-    container_name: spark-worker-1
-    depends_on:
-      - spark-master
-    ports:
-      - "8081:8081"
-    environment:
-      - "SPARK_MASTER=spark://spark-master:7077"
+#  spark-worker-1:
+#    build: ./spark_worker
+##    image: bde2020/spark-worker:2.4.1-hadoop2.7
+#    container_name: spark-worker-1
+#    depends_on:
+#      - spark-master
+#    ports:
+#      - "8081:8081"
+#    environment:
+#      - "SPARK_MASTER=spark://spark-master:7077"
 
 #  spark-app:
 #    build: ./spark_app
@@ -186,16 +191,16 @@ services:
 #    tty: true
 
 
-  spark-notebook: 
-    build: ./spark_notebook
-    container_name: spark-notebook
-    ports:
-      - 8888:8888
-    environment:
-      - PYSPARK_PYTHON=/usr/bin/python3.7
-      - PYSPARK_DRIVER_PYTHON=/usr/bin/python3.7
-#    volumes:
-#      - ./spark_notebook/work:/home/jovyan/work
+#  spark-notebook: 
+#    build: ./spark_notebook
+#    container_name: spark-notebook
+#    ports:
+#      - 8888:8888
+#    environment:
+#      - PYSPARK_PYTHON=/usr/bin/python3.7
+#      - PYSPARK_DRIVER_PYTHON=/usr/bin/python3.7
+##    volumes:
+##      - ./spark_notebook/work:/home/jovyan/work
 
 
 

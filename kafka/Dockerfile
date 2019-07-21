@@ -1,3 +1,5 @@
+# kafka
+
 FROM openjdk:8u212-jre-alpine
 
 ARG kafka_version=2.2.1
