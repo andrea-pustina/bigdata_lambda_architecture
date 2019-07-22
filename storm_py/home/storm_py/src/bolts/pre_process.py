@@ -27,7 +27,7 @@ class PreProcessBolt(Bolt):
             scheduled_time_s = fields[16]
             s_hours, s_minutes, s_seconds = scheduled_time_s.split(':')
                 
-            if int(s_hours)>24:
+            if int(s_hours)>=24:
                 s_hours = str(int(s_hours)-24)
 
             scheduled_time = datetime.strptime('{}:{}:{}'.format(s_hours, s_minutes, s_seconds), '%H:%M:%S') 

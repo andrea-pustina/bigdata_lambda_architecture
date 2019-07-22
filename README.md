@@ -1,1 +1,0 @@
-bigdata_lambda_architecture
