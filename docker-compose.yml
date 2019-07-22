@@ -1,4 +1,4 @@
-version: '3'
+version: '3.6'
 
 services:
   zookeeper:
@@ -93,9 +93,9 @@ services:
    
 
 
-  kafka-manager:
+  kafka-ui:
     image: sheepkiller/kafka-manager:latest
-    container_name: kafka-manager
+    container_name: kafka-ui
     depends_on: 
       - kafka1
     ports:
