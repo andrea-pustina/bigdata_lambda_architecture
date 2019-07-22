@@ -53,3 +53,23 @@ USER root
 
 RUN apt-get update && \
     apt-get install python3.7 -y
+
+# disable jupyter password
+RUN sed -i 's/  . \/usr\/local\/bin\/start.sh jupyter notebook "$@"/  . \/usr\/local\/bin\/start.sh jupyter notebook --NotebookApp.token='' --NotebookApp.password='' "$@"/' /usr/local/bin/start-notebook.sh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
