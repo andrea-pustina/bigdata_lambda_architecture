@@ -14,7 +14,13 @@ docker-compose down
 #docker-compose build
 docker-compose up -d
 
-# add cluster in kafka-manager
+
+
+# change permission for jupyter volumes
+sudo chgrp -R 100 ./spark_notebook/work/
+sudo chmod -R g+w ./spark_notebook/work/
+
+# preconfigure kafka cluster in kafka-manager
 printf 'waiting to kafka-manager\n'
 until $(curl --output /dev/null --silent --head --fail http://localhost:9000); do
     printf '.'

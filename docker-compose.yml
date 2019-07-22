@@ -211,8 +211,8 @@ services:
     environment:
       - PYSPARK_PYTHON=/usr/bin/python3.7
       - PYSPARK_DRIVER_PYTHON=/usr/bin/python3.7
-#    volumes:
-#      - ./spark_notebook/work:/home/jovyan/work
+    volumes:
+      - ./spark_notebook/work:/home/jovyan/work
 
 
 
