@@ -28,7 +28,6 @@ start_time = datetime.datetime.now()
 for path in ['/home/data/mta_1706_sorted']:
     with open(path + '.csv') as csvfile:
         dataset = csv.reader(csvfile)
-
         first_row = next(dataset)
         first_row_time = datetime.datetime.strptime((first_row[0]), '%Y-%m-%d %H:%M:%S')
 
