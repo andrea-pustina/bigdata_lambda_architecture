@@ -58,6 +58,10 @@ docs/_build/
 target/
 
 stream_generator/py/data/
+hadoop/data/
+gobblin/logs/
+gobblin/work-dir/
+storm_ssh/supervisor_log/
 
 
 
