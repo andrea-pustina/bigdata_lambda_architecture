@@ -6,6 +6,7 @@ job.lock.enabled=false
 kafka.brokers=kafka1:9092
 
 source.class=gobblin.source.extractor.extract.kafka.KafkaSimpleSource
+source.topicName=bus
 extract.namespace=gobblin.extract.kafka
 
 writer.builder.class=gobblin.writer.SimpleDataWriterBuilder

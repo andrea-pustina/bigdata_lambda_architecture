@@ -8,52 +8,52 @@ services:
 
 
 # STORM
-#  storm_nimbus:
-#    build: ./storm_ssh
-#    container_name: storm_nimbus
-#    command: /bin/bash -c "/usr/sbin/sshd -D & storm nimbus"
-#    depends_on:
-#      - zookeeper
-#    restart: always
-#    ports:
-#      - 6627:6627
+  storm_nimbus:
+    build: ./storm_ssh
+    container_name: storm_nimbus
+    command: /bin/bash -c "/usr/sbin/sshd -D & storm nimbus"
+    depends_on:
+      - zookeeper
+    restart: always
+    ports:
+      - 6627:6627
 
-#  storm_supervisor:
-#    build: ./storm_ssh
-#    container_name: storm_supervisor
-#    command: /bin/bash -c "/usr/sbin/sshd -D & storm supervisor"
-#    depends_on:
-#      - zookeeper
-#      - kafka1
-#      - stream_generator
-#      - storm_nimbus
-#    links:
-#      - storm_nimbus:nimbus
-#    restart: always
-#    volumes:
-#      - ./storm_ssh/supervisor_log:/var/log/storm/streamparse
+  storm_supervisor:
+    build: ./storm_ssh
+    container_name: storm_supervisor
+    command: /bin/bash -c "/usr/sbin/sshd -D & storm supervisor"
+    depends_on:
+      - zookeeper
+      - kafka1
+      - stream_generator
+      - storm_nimbus
+    links:
+      - storm_nimbus:nimbus
+    restart: always
+    volumes:
+      - ./storm_ssh/supervisor_log:/var/log/storm/streamparse
 
-#  storm_ui:
-#    image: storm
-#    container_name: storm_ui
-#    command: storm ui
-#    ports:
-#      - 8080:8080
-#    depends_on:
-#      - storm_nimbus
-#    links:
-#      - storm_nimbus:nimbus
+  storm_ui:
+    image: storm
+    container_name: storm_ui
+    command: storm ui
+    ports:
+      - 8085:8080
+    depends_on:
+      - storm_nimbus
+    links:
+      - storm_nimbus:nimbus
 
-#  storm_py:
-#    build: ./storm_py
-#    container_name: storm_py
-#    depends_on: 
-#      - storm_nimbus
-#    tty: true
-#    volumes:
-#      - ./storm_py/home:/home
-#    environment:
-#      - PYTHONUNBUFFERED=0                        # redirect python prints
+  storm_py:
+    build: ./storm_py
+    container_name: storm_py
+    depends_on: 
+      - storm_nimbus
+    tty: true
+    volumes:
+      - ./storm_py/home:/home
+    environment:
+      - PYTHONUNBUFFERED=0                        # redirect python prints
 
 
 # INPUT STREAM GENERATOR
@@ -136,6 +136,7 @@ services:
   
   hue:
     image: bde2020/hdfs-filebrowser:3.11
+    container_name: hdfs_ui
     ports:
       - 8088:8088
     environment:
@@ -167,7 +168,7 @@ services:
     environment:
       - INIT_DAEMON_STEP=setup_spark
 
-#  spark-worker-1:
+  spark-worker-1:
     build: ./spark_worker
 #    image: bde2020/spark-worker:2.4.1-hadoop2.7
     container_name: spark-worker-1
@@ -178,20 +179,31 @@ services:
     environment:
       - "SPARK_MASTER=spark://spark-master:7077"
 
-#  spark-app:
-    build: ./spark_app
-    container_name: spark-app
+  spark-worker-2:
+    build: ./spark_worker
+#    image: bde2020/spark-worker:2.4.1-hadoop2.7
+    container_name: spark-worker-2
+    depends_on:
+      - spark-master
+    ports:
+      - "8082:8082"
     environment:
-      - SPARK_MASTER_NAME=spark-master
-      - SPARK_MASTER_PORT=7077
-      - SPARK_APPLICATION_PYTHON_LOCATION=/app/app.py
-      - ENABLE_INIT_DAEMON=false
-    volumes:
-      - ./spark_app/app:/app
-    tty: true
+      - "SPARK_MASTER=spark://spark-master:7077"
+
+#  spark-app:
+#    build: ./spark_app
+#    container_name: spark-app
+#    environment:
+#      - SPARK_MASTER_NAME=spark-master
+#      - SPARK_MASTER_PORT=7077
+#      - SPARK_APPLICATION_PYTHON_LOCATION=/app/app.py
+#      - ENABLE_INIT_DAEMON=false
+#    volumes:
+#      - ./spark_app/app:/app
+#    tty: true
 
 
-#  spark-notebook: 
+  spark-notebook: 
     build: ./spark_notebook
     container_name: spark-notebook
     ports:
