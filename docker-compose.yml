@@ -157,50 +157,50 @@ services:
 
 
 # SPARK
-#  spark-master:
-#    build: ./spark_master
-##    image: bde2020/spark-master:2.4.1-hadoop2.7
-#    container_name: spark-master
-#    ports:
-#      - "8080:8080"
-#      - "7077:7077"
-#    environment:
-#      - INIT_DAEMON_STEP=setup_spark
+  spark-master:
+    build: ./spark_master
+#    image: bde2020/spark-master:2.4.1-hadoop2.7
+    container_name: spark-master
+    ports:
+      - "8080:8080"
+      - "7077:7077"
+    environment:
+      - INIT_DAEMON_STEP=setup_spark
 
 #  spark-worker-1:
-#    build: ./spark_worker
-##    image: bde2020/spark-worker:2.4.1-hadoop2.7
-#    container_name: spark-worker-1
-#    depends_on:
-#      - spark-master
-#    ports:
-#      - "8081:8081"
-#    environment:
-#      - "SPARK_MASTER=spark://spark-master:7077"
+    build: ./spark_worker
+#    image: bde2020/spark-worker:2.4.1-hadoop2.7
+    container_name: spark-worker-1
+    depends_on:
+      - spark-master
+    ports:
+      - "8081:8081"
+    environment:
+      - "SPARK_MASTER=spark://spark-master:7077"
 
 #  spark-app:
-#    build: ./spark_app
-#    container_name: spark-app
-#    environment:
-#      - SPARK_MASTER_NAME=spark-master
-#      - SPARK_MASTER_PORT=7077
-#      - SPARK_APPLICATION_PYTHON_LOCATION=/app/app.py
-#      - ENABLE_INIT_DAEMON=false
-#    volumes:
-#      - ./spark_app/app:/app
-#    tty: true
+    build: ./spark_app
+    container_name: spark-app
+    environment:
+      - SPARK_MASTER_NAME=spark-master
+      - SPARK_MASTER_PORT=7077
+      - SPARK_APPLICATION_PYTHON_LOCATION=/app/app.py
+      - ENABLE_INIT_DAEMON=false
+    volumes:
+      - ./spark_app/app:/app
+    tty: true
 
 
 #  spark-notebook: 
-#    build: ./spark_notebook
-#    container_name: spark-notebook
-#    ports:
-#      - 8888:8888
-#    environment:
-#      - PYSPARK_PYTHON=/usr/bin/python3.7
-#      - PYSPARK_DRIVER_PYTHON=/usr/bin/python3.7
-##    volumes:
-##      - ./spark_notebook/work:/home/jovyan/work
+    build: ./spark_notebook
+    container_name: spark-notebook
+    ports:
+      - 8888:8888
+    environment:
+      - PYSPARK_PYTHON=/usr/bin/python3.7
+      - PYSPARK_DRIVER_PYTHON=/usr/bin/python3.7
+#    volumes:
+#      - ./spark_notebook/work:/home/jovyan/work
 
 
 
