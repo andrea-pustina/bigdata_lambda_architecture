@@ -190,19 +190,6 @@ services:
     environment:
       - "SPARK_MASTER=spark://spark-master:7077"
 
-#  spark-app:
-#    build: ./spark_app
-#    container_name: spark-app
-#    environment:
-#      - SPARK_MASTER_NAME=spark-master
-#      - SPARK_MASTER_PORT=7077
-#      - SPARK_APPLICATION_PYTHON_LOCATION=/app/app.py
-#      - ENABLE_INIT_DAEMON=false
-#    volumes:
-#      - ./spark_app/app:/app
-#    tty: true
-
-
   spark-notebook: 
     build: ./spark_notebook
     container_name: spark-notebook
